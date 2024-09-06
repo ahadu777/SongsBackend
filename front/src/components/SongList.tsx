@@ -1,6 +1,17 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchSongsRequest } from '../slices/songSlice';
+import styled from 'styled-components';
+
+
+const Card= styled.div`
+ display: flex;
+ flex-direction: column;
+ border: 1px solid #e2e2e2;
+ border-radius: 12px;
+ padding: 5px;
+ margin:4px;
+`;
 
 const SongList: React.FC = () => {
   const dispatch = useDispatch();
@@ -21,22 +32,18 @@ const SongList: React.FC = () => {
   return (
     <div>
       <h1>Songs</h1>
-      <ul>
         {songList.length > 0 ? (
           songList.map((song: any) => (
-            <li key={song._id}>
+            <Card key={song._id}>
               <h2>{song.title}</h2>
               <p>Album: {song.album}</p>
               <p>Artist: {song.artist}</p>
               <p>Genre: {song.genre}</p>
-              <p>Created At: {new Date(song.createdAt).toLocaleString()}</p>
-              <p>Updated At: {new Date(song.updatedAt).toLocaleString()}</p>
-            </li>
+            </Card>
           ))
         ) : (
           <p>No songs available.</p>
         )}
-      </ul>
     </div>
   );
 };
