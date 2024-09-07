@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 export interface Song {
-    // _id: string | null; 
+    _id?: string | null; 
     title: string;
     album: string;
     artist: string;
@@ -49,7 +49,19 @@ const songSlice = createSlice({
     addSongFailure(state, action: PayloadAction<string>) {
       state.loading = false;
       state.error = action.payload ;
-    }
+    } ,
+    deleteSongRequest(state, action: PayloadAction<string>) {
+      state.loading = true;
+      state.error = null;
+    },
+    deleteSongSuccess(state, action: PayloadAction<string>) {
+      state.loading = false;
+      state.songs = state.songs.filter(song => song._id !== action.payload);
+    },
+    deleteSongFailure(state, action: PayloadAction<string>) {
+      state.loading = false;
+      state.error = action.payload;
+    },
    
   },
 });
@@ -60,7 +72,10 @@ export const {
   fetchSongsFailure,
   addSongRequest, 
   addSongSuccess, 
-  addSongFailure 
+  addSongFailure ,
+  deleteSongRequest,
+  deleteSongSuccess,
+  deleteSongFailure,
 } = songSlice.actions;
 
 export default songSlice.reducer;

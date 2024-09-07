@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchSongsRequest } from '../slices/songSlice';
+import { fetchSongsRequest,deleteSongRequest } from '../slices/songSlice';
 import styled from 'styled-components';
 
 
@@ -36,7 +36,9 @@ const SongList: React.FC = () => {
 
   // Ensure songs is an array; if it's an object, wrap it in an array
   const songList = Array.isArray(songs) ? songs : songs ? [songs] : [];
-
+  const handleDelete = (id: string) => {
+    dispatch(deleteSongRequest(id));
+  };
   return (
     <div>
       <h1>Songs</h1>
@@ -49,7 +51,7 @@ const SongList: React.FC = () => {
               <p>Artist: {song.artist}</p>
               <p>Genre: {song.genre}</p>
 
-              <button>delete</button>
+              <button onClick={() => handleDelete(song._id)}>delete</button>
             </Card>
           ))
         ) : (

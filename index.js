@@ -51,6 +51,23 @@ app.put("/songs/:id", async function (req, res) {
   }
 });
 
+app.delete("/songs/:id", async function (req, res) {
+  const { id } = req.params;
+
+  try {
+    const result = await Song.deleteOne({ _id: id }); 
+
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ message: "Song not found" });
+    }
+
+    res.status(200).json({ message: "Song deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error", error: error.message });
+  }
+});
+
+
 
 const mongoose = require("mongoose");
 mongoose

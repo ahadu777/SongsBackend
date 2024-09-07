@@ -6,6 +6,9 @@ import {
   addSongRequest,
   addSongSuccess,
   addSongFailure,
+  deleteSongRequest,
+  deleteSongSuccess,
+  deleteSongFailure,
   Song
 } from './slices/songSlice';
 
@@ -49,6 +52,25 @@ function* fetchSongs(): any {
       yield put(addSongFailure(error instanceof Error ? error.message : 'Unknown error'));
     }
   }
+
+
+  function* deleteSong(action: { payload: string }): Generator<unknown, void, unknown> {
+    try {
+      // yield put(deleteSongRequest(action.payload));
+  
+      const response: any = yield call(fetch, `${API_URL}/${action.payload}`, {
+        method: 'DELETE',
+      });
+  console.log(action.payload);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+  
+      yield put(deleteSongSuccess(action.payload));
+    } catch (error) {
+      yield put(deleteSongFailure(error instanceof Error ? error.message : 'Unknown error'));
+    }
+  }
   
 //   function* fetchSongs() : any {
 //     try {
@@ -62,6 +84,8 @@ function* fetchSongs(): any {
   function* rootSaga() {
     yield takeLatest(fetchSongsRequest.type, fetchSongs);
     yield takeEvery(addSongRequest, addSong);
+    yield takeEvery(deleteSongRequest, deleteSong);
+
 
   }
   
