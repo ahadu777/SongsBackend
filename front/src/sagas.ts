@@ -1,10 +1,13 @@
-import { call, put, takeLatest } from 'redux-saga/effects';
+import { call, put, takeEvery, takeLatest } from 'redux-saga/effects';
 import {
   fetchSongsRequest,
   fetchSongsSuccess,
   fetchSongsFailure,
+  addSongRequest,
+  addSongSuccess,
+  addSongFailure,
+  Song
 } from './slices/songSlice';
-
 
 const API_URL = 'https://songsbackend-dwx6.onrender.com/songs';
 
@@ -23,6 +26,29 @@ function* fetchSongs(): any {
     }
   }
   
+
+  function* addSong(action: { payload: Song }): Generator<unknown, void, unknown> {
+    try {
+      // yield put(addSongRequest(action.payload));
+      
+      const response: any = yield call(fetch, API_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(action.payload),
+      }) as unknown as Response; // Assert the type here
+  
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+  
+      const data: any = yield response.json(); // Assert the type here
+      yield put(addSongSuccess(data));
+    } catch (error) {
+      yield put(addSongFailure(error instanceof Error ? error.message : 'Unknown error'));
+    }
+  }
   
 //   function* fetchSongs() : any {
 //     try {
@@ -35,6 +61,8 @@ function* fetchSongs(): any {
   
   function* rootSaga() {
     yield takeLatest(fetchSongsRequest.type, fetchSongs);
+    yield takeEvery(addSongRequest, addSong);
+
   }
   
   export default rootSaga;

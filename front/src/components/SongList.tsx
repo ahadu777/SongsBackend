@@ -9,9 +9,17 @@ const Card= styled.div`
  flex-direction: column;
  border: 1px solid #e2e2e2;
  border-radius: 12px;
- padding: 5px;
- margin:4px;
+ padding: 8px;
+ margin-top:40px;
+ width:300px;
 `;
+
+const Row=styled.div` 
+display: flex;
+flex-direction: row;
+justify-content: center;
+gap:14px;
+`
 
 const SongList: React.FC = () => {
   const dispatch = useDispatch();
@@ -32,6 +40,7 @@ const SongList: React.FC = () => {
   return (
     <div>
       <h1>Songs</h1>
+      <Row>
         {songList.length > 0 ? (
           songList.map((song: any) => (
             <Card key={song._id}>
@@ -39,11 +48,14 @@ const SongList: React.FC = () => {
               <p>Album: {song.album}</p>
               <p>Artist: {song.artist}</p>
               <p>Genre: {song.genre}</p>
+
+              <button>delete</button>
             </Card>
           ))
         ) : (
           <p>No songs available.</p>
         )}
+        </Row>
     </div>
   );
 };

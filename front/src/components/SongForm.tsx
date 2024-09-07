@@ -1,48 +1,58 @@
-// src/components/SongForm.tsx
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { addSong } from '../slices/songSlice';
+import { addSongRequest } from '../slices/songSlice';
+import styled from 'styled-components';
+import SongList from './SongList';
 
-interface SongFormProps {
-  currentSong?: { id: number; title: string; artist: string };
-  onClose: () => void;
-}
+const Body = styled.div`
+  width: 100%;
+  padding: 10px;
+  margin: 0;
+`;
 
-const SongForm: React.FC<SongFormProps> = ({ currentSong, onClose }) => {
-  const [title, setTitle] = useState(currentSong ? currentSong.title : '');
-  const [artist, setArtist] = useState(currentSong ? currentSong.artist : '');
+const AddSong = () => {
   const dispatch = useDispatch();
+  const [title, setTitle] = useState('');
+  const [album, setAlbum] = useState('');
+  const [artist, setArtist] = useState('');
+  const [genre, setGenre] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (currentSong) {
-      // dispatch(updateSong({ id: currentSong.id, title, artist }));
-    } else {
-      // dispatch(addSong({ id: Date.now(), title, artist }));
-    }
-    onClose();
+    const newSong = { title, album, artist, genre };
+    
+    // Prevent multiple submissions
+    if (isSubmitting) return;
+
+    setIsSubmitting(true); // Set submitting state to true
+    console.log(newSong);
+    dispatch(addSongRequest(newSong)); // Dispatching addSongRequest with the new song data
+
+    // Reset form fields
+    setTitle('');
+    setAlbum('');
+    setArtist('');
+    setGenre('');
+    
+    // Optionally, you can reset the submitting state after a delay or after the action completes
+    setIsSubmitting(false); // Reset after dispatch
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input
-        type="text"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        placeholder="Song Title"
-        required
-      />
-      <input
-        type="text"
-        value={artist}
-        onChange={(e) => setArtist(e.target.value)}
-        placeholder="Artist"
-        required
-      />
-      <button type="submit">{currentSong ? 'Update' : 'Add'} Song</button>
-      <button type="button" onClick={onClose}>Cancel</button>
-    </form>
+    <>
+    <Body>
+      <form onSubmit={handleSubmit}>
+        <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Title" required />
+        <input value={album} onChange={(e) => setAlbum(e.target.value)} placeholder="Album" required />
+        <input value={artist} onChange={(e) => setArtist(e.target.value)} placeholder="Artist" required />
+        <input value={genre} onChange={(e) => setGenre(e.target.value)} placeholder="Genre" required />
+        <button type="submit" disabled={isSubmitting}>Add Song</button>
+      </form>
+    </Body>
+    <SongList></SongList>
+    </>
   );
 };
 
-export default SongForm;
+export default AddSong;

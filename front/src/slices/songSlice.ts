@@ -1,14 +1,13 @@
-// src/slices/songSlice.ts
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-interface Song {
-    _id: string; 
+export interface Song {
+    // _id: string | null; 
     title: string;
     album: string;
     artist: string;
     genre: string;
-    createdAt: string;
-    updatedAt: string;
+    // createdAt: string | null;
+    // updatedAt: string | null;
 }
 
 interface SongState {
@@ -39,18 +38,19 @@ const songSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
     },
-    addSong: (state, action: PayloadAction<Song>) => {
-      state.songs.push(action.payload);
+    addSongRequest(state, action: PayloadAction<Song>) {
+      state.loading = true;
+      state.error = null;
     },
-    // updateSong: (state, action: PayloadAction<Song>) => {
-    //   const index = state.songs.findIndex(song => song.id === action.payload.id);
-    //   if (index !== -1) {
-    //     state.songs[index] = action.payload;
-    //   }
-    // },
-    // deleteSong: (state, action: PayloadAction<number>) => {
-    //   state.songs = state.songs.filter(song => song.id !== action.payload);
-    // },
+    addSongSuccess(state, action: PayloadAction<Song>) {
+      state.loading = false;
+      state.songs.push(action.payload); // Add the new song to the list
+    },
+    addSongFailure(state, action: PayloadAction<string>) {
+      state.loading = false;
+      state.error = action.payload ;
+    }
+   
   },
 });
 
@@ -58,9 +58,9 @@ export const {
   fetchSongsRequest,
   fetchSongsSuccess,
   fetchSongsFailure,
-  addSong,
-//   updateSong,
-//   deleteSong,
+  addSongRequest, 
+  addSongSuccess, 
+  addSongFailure 
 } = songSlice.actions;
 
 export default songSlice.reducer;
