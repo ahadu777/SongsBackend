@@ -3,12 +3,22 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchSongsRequest, deleteSongRequest, updateSongRequest, updateSongSuccess, addSongRequest } from '../slices/songSlice';
 import styled from 'styled-components';
 
+const Container = styled.div`
+  padding: 20px;
+`;
+
+const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 20px;
+`;
+
 const Card = styled.div`
   display: flex;
   flex-direction: column;
   border: 1px solid #e2e2e2;
   border-radius: 12px;
-  padding: 5px;
+  padding: 10px;
   width: 100%;
   max-width: 300px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -41,7 +51,7 @@ const ModalContent = styled.div`
 `;
 
 const Button = styled.button`
-  background-color: #007bff; /* Primary color */
+  background-color: #007bff;
   color: white;
   border: none;
   border-radius: 8px;
@@ -51,32 +61,20 @@ const Button = styled.button`
   transition: background-color 0.3s ease;
 
   &:hover {
-    background-color: #0056b3; /* Darker shade on hover */
-  }
-
-  &:disabled {
-    background-color: #ccc; /* Disabled state */
-    cursor: not-allowed;
-  }
-`;
-
-const DeleteButton=styled.button`
- background: red; 
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 10px 15px;
-  margin: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-
-  &:hover {
-    background-color: #0056b3; 
+    background-color: #0056b3;
   }
 
   &:disabled {
     background-color: #ccc;
     cursor: not-allowed;
+  }
+`;
+
+const DeleteButton = styled(Button)`
+  background: red;
+
+  &:hover {
+    background-color: #ff4d4d;
   }
 `;
 
@@ -92,6 +90,26 @@ const Input = styled.input`
   }
 `;
 
+const FilterContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+`;
+
+const FilterInput = styled.select`
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #e2e2e2;
+  border-radius: 8px;
+  flex: 1;
+  margin-right: 10px;
+
+  @media (max-width: 600px) {
+    margin-right: 0;
+    margin-bottom: 10px;
+  }
+`;
+
 const SongList: React.FC = () => {
   const dispatch = useDispatch();
   const { songs, loading, error } = useSelector((state: any) => state.songs);
@@ -100,6 +118,8 @@ const SongList: React.FC = () => {
   const [isAdding, setIsAdding] = useState(false);
   const [currentSong, setCurrentSong] = useState<any>(null);
   const [formData, setFormData] = useState({ title: '', album: '', artist: '', genre: '' });
+  
+  const [filters, setFilters] = useState({ genre: '', artist: '', album: '' });
 
   useEffect(() => {
     dispatch(fetchSongsRequest());
@@ -137,26 +157,61 @@ const SongList: React.FC = () => {
     setFormData({ title: '', album: '', artist: '', genre: '' });
   };
 
+  const handleFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFilters({ ...filters, [name]: value });
+  };
+
+  const filteredSongs = songs.filter((song: { genre: string; artist: string; album: string; }) => {
+    return (
+      (!filters.genre || song.genre === filters.genre) &&
+      (!filters.artist || song.artist === filters.artist) &&
+      (!filters.album || song.album === filters.album)
+    );
+  });
+
+  // Extract unique artists and albums for filter options
+  const uniqueArtists: string[] = Array.from(new Set(songs.map((song: any) => song.artist))) as string[];
+  const uniqueAlbums: string[] = Array.from(new Set(songs.map((song: any) => song.album))) as string[];
+  const uniqueGenres: string[] = Array.from(new Set(songs.map((song: any) => song.genre))) as string[];
+
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
 
-  const songList = Array.isArray(songs) ? songs : songs ? [songs] : [];
-
   return (
-    <div>
-      <h1>Songs</h1>
-      <Button onClick={() => setIsAdding(true)}>Add Song</Button>
+    <Container>
+      <ButtonContainer>
+        <Button onClick={() => setIsAdding(true)}>Add Song</Button>
+      </ButtonContainer>
+      <FilterContainer>
+        <FilterInput name="genre" onChange={handleFilterChange} value={filters.genre}>
+          <option value="">All Genres</option>
+          {uniqueGenres.map((genre, index) => (
+            <option key={index} value={genre}>{genre}</option>
+          ))}
+        </FilterInput>
+        <FilterInput name="artist" onChange={handleFilterChange} value={filters.artist}>
+          <option value="">All Artists</option>
+          {uniqueArtists.map((artist, index) => (
+            <option key={index} value={artist}>{artist}</option>
+          ))}
+        </FilterInput>
+        <FilterInput name="album" onChange={handleFilterChange} value={filters.album}>
+          <option value="">All Albums</option>
+          {uniqueAlbums.map((album, index) => (
+            <option key={index} value={album}>{album}</option>
+          ))}
+        </FilterInput>
+      </FilterContainer>
       <Row>
-        {songList.length > 0 ? (
-          songList.map((song: any) => (
+        {filteredSongs.length > 0 ? (
+          filteredSongs.map((song: any) => (
             <Card key={song._id}>
               <h2>{song.title}</h2>
               <p>Album: {song.album}</p>
               <p>Artist: {song.artist}</p>
               <p>Genre: {song.genre}</p>
-             
               <Button onClick={() => handleEdit(song)}>Edit</Button>
-
               <DeleteButton onClick={() => handleDelete(song._id)}>Delete</DeleteButton>
             </Card>
           ))
@@ -244,7 +299,7 @@ const SongList: React.FC = () => {
           </ModalContent>
         </Modal>
       )}
-    </div>
+    </Container>
   );
 };
 

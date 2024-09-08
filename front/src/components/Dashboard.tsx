@@ -64,19 +64,19 @@ const Dashboard: React.FC = () => {
     <DashboardContainer>
       <CardContainer>
         <Card>
-          <h2>Total Songs</h2>
+          <h4>Total Songs</h4>
           <p>{stats.totalSongs}</p>
         </Card>
         <Card>
-          <h2>Total Artists</h2>
+          <h4>Total Artists</h4>
           <p>{stats.totalArtists}</p>
         </Card>
         <Card>
-          <h2>Average Songs/Artist</h2>
-          {/* <p>{stats.averageSongsPerArtist.toFixed(2)}</p> */}
+          <h4>Average Songs/Artist</h4>
+          <p>{stats.averageSongsPerArtist.toFixed(2)}</p>
         </Card>
         <Card>
-          <h2>Top Genre</h2>
+          <h4>Top Genre</h4>
           <p>{stats.topGenre ? `${stats.topGenre.genre} (${stats.topGenre.count})` : 'N/A'}</p>
         </Card>
       </CardContainer>
