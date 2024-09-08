@@ -43,7 +43,7 @@ app.post("/songs", async function (req, res) {
 
 app.put("/songs/:id", async function (req, res) {
   const { id } = req.params;
-  const song = await Song.findByIdAndUpdate(id, req.body);
+  const song = await Song.findByIdAndUpdate(id, req.body,{new: true});
   if (!song) {
     res.status(404);
   } else {
@@ -66,6 +66,21 @@ app.delete("/songs/:id", async function (req, res) {
     res.status(500).json({ message: "Internal server error", error: error.message });
   }
 });
+
+app.get("/stats", async function (req, res) {
+  try {
+    const totalSongs = await Song.countDocuments();
+    const songsByGenre = await Song.aggregate([
+      { $group: { _id: "$genre", count: { $sum: 1 } } }
+    ]);
+    
+    res.json({ totalSongs, songsByGenre });
+  } catch (error) {
+    console.error("Error fetching stats:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
 
 
 

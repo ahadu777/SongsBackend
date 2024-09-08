@@ -1,23 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchSongsRequest, deleteSongRequest, updateSongRequest,updateSongSuccess, addSongRequest } from '../slices/songSlice';
+import { fetchSongsRequest, deleteSongRequest, updateSongRequest, updateSongSuccess, addSongRequest } from '../slices/songSlice';
 import styled from 'styled-components';
 
 const Card = styled.div`
- display: flex;
- flex-direction: column;
- border: 1px solid #e2e2e2;
- border-radius: 12px;
- padding: 8px;
- margin-top: 40px;
- width: 300px;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #e2e2e2;
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 20px;
+  width: 100%;
+  max-width: 300px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 `;
 
-const Row = styled.div` 
- display: flex;
- flex-direction: row;
- justify-content: center;
- gap: 14px;
+const Row = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: start;
+  gap: 14px;
 `;
 
 const Modal = styled.div`
@@ -36,6 +38,59 @@ const ModalContent = styled.div`
   background: white;
   padding: 20px;
   border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+`;
+
+const Button = styled.button`
+  background-color: #007bff; /* Primary color */
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 15px;
+  margin: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: #0056b3; /* Darker shade on hover */
+  }
+
+  &:disabled {
+    background-color: #ccc; /* Disabled state */
+    cursor: not-allowed;
+  }
+`;
+
+const DeleteButton=styled.button`
+ background: red; 
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 15px;
+  margin: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: #0056b3; 
+  }
+
+  &:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+`;
+
+const Input = styled.input`
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #e2e2e2;
+  border-radius: 8px;
+
+  @media (max-width: 600px) {
+    padding: 8px;
+  }
 `;
 
 const SongList: React.FC = () => {
@@ -68,17 +123,13 @@ const SongList: React.FC = () => {
         id: currentSong._id,
         song: formData
       }));
-      
-      // Instead of fetching songs again, we can update the local state directly
-      dispatch(fetchSongsRequest())
-      // dispatch(updateSongSuccess({ ...currentSong, ...formData }));
-  
+      dispatch(updateSongSuccess({ ...currentSong, ...formData }));
+
       setIsEditing(false);
       setCurrentSong(null);
       setFormData({ title: '', album: '', artist: '', genre: '' });
     }
   };
-  
 
   const handleAdd = (e: React.FormEvent) => {
     e.preventDefault();
@@ -95,7 +146,7 @@ const SongList: React.FC = () => {
   return (
     <div>
       <h1>Songs</h1>
-      <button onClick={() => setIsAdding(true)}>Add Song</button>
+      <Button onClick={() => setIsAdding(true)}>Add Song</Button>
       <Row>
         {songList.length > 0 ? (
           songList.map((song: any) => (
@@ -104,8 +155,10 @@ const SongList: React.FC = () => {
               <p>Album: {song.album}</p>
               <p>Artist: {song.artist}</p>
               <p>Genre: {song.genre}</p>
-              <button onClick={() => handleDelete(song._id)}>Delete</button>
-              <button onClick={() => handleEdit(song)}>Edit</button>
+             
+              <Button onClick={() => handleEdit(song)}>Edit</Button>
+
+              <DeleteButton onClick={() => handleDelete(song._id)}>Delete</DeleteButton>
             </Card>
           ))
         ) : (
@@ -118,36 +171,36 @@ const SongList: React.FC = () => {
           <ModalContent>
             <h2>Edit Song</h2>
             <form onSubmit={handleUpdate}>
-              <input
+              <Input
                 type="text"
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                 placeholder="Title"
                 required
               />
-              <input
+              <Input
                 type="text"
                 value={formData.album}
                 onChange={(e) => setFormData({ ...formData, album: e.target.value })}
                 placeholder="Album"
                 required
               />
-              <input
+              <Input
                 type="text"
                 value={formData.artist}
                 onChange={(e) => setFormData({ ...formData, artist: e.target.value })}
                 placeholder="Artist"
                 required
               />
-              <input
+              <Input
                 type="text"
                 value={formData.genre}
                 onChange={(e) => setFormData({ ...formData, genre: e.target.value })}
                 placeholder="Genre"
                 required
               />
-              <button type="submit">Update Song</button>
-              <button type="button" onClick={() => setIsEditing(false)}>Cancel</button>
+              <Button type="submit">Update Song</Button>
+              <Button type="button" onClick={() => setIsEditing(false)}>Cancel</Button>
             </form>
           </ModalContent>
         </Modal>
@@ -158,36 +211,36 @@ const SongList: React.FC = () => {
           <ModalContent>
             <h2>Add Song</h2>
             <form onSubmit={handleAdd}>
-              <input
+              <Input
                 type="text"
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                 placeholder="Title"
                 required
               />
-              <input
+              <Input
                 type="text"
                 value={formData.album}
                 onChange={(e) => setFormData({ ...formData, album: e.target.value })}
                 placeholder="Album"
                 required
               />
-              <input
+              <Input
                 type="text"
                 value={formData.artist}
                 onChange={(e) => setFormData({ ...formData, artist: e.target.value })}
                 placeholder="Artist"
                 required
               />
-              <input
+              <Input
                 type="text"
                 value={formData.genre}
                 onChange={(e) => setFormData({ ...formData, genre: e.target.value })}
                 placeholder="Genre"
                 required
               />
-              <button type="submit">Add Song</button>
-              <button type="button" onClick={() => setIsAdding(false)}>Cancel</button>
+              <Button type="submit">Add Song</Button>
+              <Button type="button" onClick={() => setIsAdding(false)}>Cancel</Button>
             </form>
           </ModalContent>
         </Modal>
