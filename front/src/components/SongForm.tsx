@@ -35,8 +35,7 @@ const AddSong = () => {
     setArtist('');
     setGenre('');
     
-    // Optionally, you can reset the submitting state after a delay or after the action completes
-    setIsSubmitting(false); // Reset after dispatch
+    setIsSubmitting(false); 
   };
 
   return (

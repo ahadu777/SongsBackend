@@ -17,7 +17,7 @@ const App: React.FC = () => {
   return (
     <div>
        <Routes>
-       <Route path="/" element={<SongList />} />
+       <Route path="/" element={<Dashboard />} />
 
             <Route path="/addsong" element={<SongForm />} />
          </Routes>

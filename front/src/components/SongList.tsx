@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchSongsRequest, deleteSongRequest, updateSongRequest, addSongRequest } from '../slices/songSlice';
+import { fetchSongsRequest, deleteSongRequest, updateSongRequest,updateSongSuccess, addSongRequest } from '../slices/songSlice';
 import styled from 'styled-components';
 
 const Card = styled.div`
@@ -61,18 +61,24 @@ const SongList: React.FC = () => {
     setIsEditing(true);
   };
 
-  const handleUpdate = (e: React.FormEvent) => {
+  const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (currentSong) {
-      dispatch(updateSongRequest({
+      await dispatch(updateSongRequest({
         id: currentSong._id,
         song: formData
       }));
+      
+      // Instead of fetching songs again, we can update the local state directly
+      dispatch(fetchSongsRequest())
+      // dispatch(updateSongSuccess({ ...currentSong, ...formData }));
+  
       setIsEditing(false);
       setCurrentSong(null);
       setFormData({ title: '', album: '', artist: '', genre: '' });
     }
   };
+  
 
   const handleAdd = (e: React.FormEvent) => {
     e.preventDefault();
