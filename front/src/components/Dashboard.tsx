@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { PieChart, Pie, BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import LoadingComponent from './LoadingComponent';
 import axios from 'axios';
 
 const DashboardContainer = styled.div`
@@ -53,7 +54,7 @@ const Dashboard: React.FC = () => {
     fetchStats();
   }, []);
 
-  if (!stats) return <div>Loading...</div>;
+  if (!stats) return <LoadingComponent/>;
 
   const genreData = stats.songsByGenre.map((genre: any) => ({
     name: genre._id,

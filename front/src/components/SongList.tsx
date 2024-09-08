@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchSongsRequest, deleteSongRequest, updateSongRequest, updateSongSuccess, addSongRequest } from '../slices/songSlice';
 import styled from 'styled-components';
+import LoadingComponent from './LoadingComponent';
 
 const Container = styled.div`
   padding: 20px;
@@ -175,7 +176,7 @@ const SongList: React.FC = () => {
   const uniqueAlbums: string[] = Array.from(new Set(songs.map((song: any) => song.album))) as string[];
   const uniqueGenres: string[] = Array.from(new Set(songs.map((song: any) => song.genre))) as string[];
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <LoadingComponent/>;
   if (error) return <div>Error: {error}</div>;
 
   return (
