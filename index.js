@@ -1,6 +1,8 @@
 // import my model here
 
 const Song = require("./models/songs.model.js");
+require('dotenv').config();
+
 
 const express = require("express");
 const app = express();
@@ -108,7 +110,7 @@ app.get("/stats", async function (req, res) {
 const mongoose = require("mongoose");
 mongoose
   .connect(
-    "mongodb+srv://ahadu4321:admin@songscluster.soce6.mongodb.net/Songs?retryWrites=true&w=majority&appName=SongsCluster"
+    process.env.MONGO_CONNECTION_STRING 
   ,{
     useNewUrlParser: true,
     useUnifiedTopology: true,
