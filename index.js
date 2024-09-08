@@ -67,19 +67,40 @@ app.delete("/songs/:id", async function (req, res) {
   }
 });
 
+
 app.get("/stats", async function (req, res) {
   try {
     const totalSongs = await Song.countDocuments();
+
+    // Get songs grouped by genre
     const songsByGenre = await Song.aggregate([
-      { $group: { _id: "$genre", count: { $sum: 1 } } }
+      { $group: { _id: "$genre", count: { $sum: 1 } } },
+      { $sort: { count: -1 } } // Sort by count descending
     ]);
-    
-    res.json({ totalSongs, songsByGenre });
+
+    // Get total artists
+    const totalArtists = await Song.distinct("artist").then(artists => artists.length);
+
+    // Calculate average songs per artist
+    const averageSongsPerArtist = totalArtists > 0 ? totalSongs / totalArtists : 0;
+
+    // Get the top genre
+    const topGenre = songsByGenre.length > 0 ? songsByGenre[0] : null;
+
+    res.json({
+      totalSongs,
+      songsByGenre,
+      totalArtists,
+      averageSongsPerArtist,
+      topGenre: topGenre ? { genre: topGenre._id, count: topGenre.count } : null
+    });
   } catch (error) {
     console.error("Error fetching stats:", error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
+
+
 
 
 

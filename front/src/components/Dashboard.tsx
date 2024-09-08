@@ -1,39 +1,110 @@
 import React, { useEffect, useState } from 'react';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
+import styled from 'styled-components';
+import { PieChart, Pie, BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import axios from 'axios';
 
-const Dashboard = () => {
-  const [stats, setStats] = useState({ totalSongs: 0, songsByGenre: [] });
+const DashboardContainer = styled.div`
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+const CardContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 20px;
+`;
+
+const Card = styled.div`
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  width: 200px;
+  text-align: center;
+
+  @media (max-width: 600px) {
+    width: 100%;
+    max-width: 300px;
+  }
+`;
+
+const ChartContainer = styled.div`
+  width: 100%;
+  max-width: 800px;
+  margin: 20px 0;
+`;
+
+const Dashboard: React.FC = () => {
+  const [stats, setStats] = useState<any>(null);
 
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const response = await axios.get('http://localhost:3001/stats');
+        const response = await axios.get('https://songsbackend-dwx6.onrender.com/stats');
         setStats(response.data);
       } catch (error) {
         console.error("Error fetching stats:", error);
       }
     };
-
     fetchStats();
   }, []);
 
+  if (!stats) return <div>Loading...</div>;
+
+  const genreData = stats.songsByGenre.map((genre: any) => ({
+    name: genre._id,
+    value: genre.count,
+  }));
+
   return (
-    <div>
-      <h1>Total Songs: {stats.totalSongs}</h1>
-      <BarChart
-        width={600}
-        height={300}
-        data={stats.songsByGenre}
-        margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-      >
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="_id" />
-        <YAxis />
-        <Tooltip />
-        <Bar dataKey="count" fill="#8884d8" />
-      </BarChart>
-    </div>
+    <DashboardContainer>
+      <CardContainer>
+        <Card>
+          <h2>Total Songs</h2>
+          <p>{stats.totalSongs}</p>
+        </Card>
+        <Card>
+          <h2>Total Artists</h2>
+          <p>{stats.totalArtists}</p>
+        </Card>
+        <Card>
+          <h2>Average Songs/Artist</h2>
+          {/* <p>{stats.averageSongsPerArtist.toFixed(2)}</p> */}
+        </Card>
+        <Card>
+          <h2>Top Genre</h2>
+          <p>{stats.topGenre ? `${stats.topGenre.genre} (${stats.topGenre.count})` : 'N/A'}</p>
+        </Card>
+      </CardContainer>
+
+      <ChartContainer>
+        <h2>Genre Distribution</h2>
+        <ResponsiveContainer width="100%" height={300}>
+          <PieChart>
+            <Pie data={genreData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} fill="#8884d8" label />
+            <Tooltip />
+            <Legend />
+          </PieChart>
+        </ResponsiveContainer>
+      </ChartContainer>
+
+      <ChartContainer>
+        <h2>Songs by Genre</h2>
+        <ResponsiveContainer width="100%" height={300}>
+          <BarChart data={stats.songsByGenre}>
+            <XAxis dataKey="_id" />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <Bar dataKey="count" fill="#82ca9d" />
+          </BarChart>
+        </ResponsiveContainer>
+      </ChartContainer>
+    </DashboardContainer>
   );
 };
 

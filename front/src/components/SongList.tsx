@@ -8,8 +8,7 @@ const Card = styled.div`
   flex-direction: column;
   border: 1px solid #e2e2e2;
   border-radius: 12px;
-  padding: 16px;
-  margin-top: 20px;
+  padding: 5px;
   width: 100%;
   max-width: 300px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -18,7 +17,7 @@ const Card = styled.div`
 const Row = styled.div`
   display: flex;
   flex-wrap: wrap;
-  justify-content: start;
+  justify-content: center;
   gap: 14px;
 `;
 
