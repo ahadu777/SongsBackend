@@ -1,1 +1,1 @@
-this app used eedux toolkit and saga for the frontend , express with mongo for the backend and allows users to create,update and delete songs and show some stats regarding those songs , the live link is https://songs-backend-azure.vercel.app/.
+this app uses redux toolkit and saga for the frontend , express with mongo for the backend and allows users to create,update and delete songs and show some stats regarding those songs , the live link is https://songs-backend-azure.vercel.app/.
