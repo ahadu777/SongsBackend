@@ -41,15 +41,7 @@ const AddSong = () => {
 
   return (
     <>
-    <Body>
-      <form onSubmit={handleSubmit}>
-        <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Title" required />
-        <input value={album} onChange={(e) => setAlbum(e.target.value)} placeholder="Album" required />
-        <input value={artist} onChange={(e) => setArtist(e.target.value)} placeholder="Artist" required />
-        <input value={genre} onChange={(e) => setGenre(e.target.value)} placeholder="Genre" required />
-        <button type="submit" disabled={isSubmitting}>Add Song</button>
-      </form>
-    </Body>
+   
     <SongList></SongList>
     </>
   );

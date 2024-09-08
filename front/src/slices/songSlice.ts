@@ -62,7 +62,21 @@ const songSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
     },
-   
+    updateSongRequest(state, action: PayloadAction<{ id: string; song: Song }>) {
+      state.loading = true;
+      state.error = null;
+    },
+    updateSongSuccess(state, action: PayloadAction<Song>) {
+      state.loading = false;
+      const index = state.songs.findIndex(song => song._id === action.payload._id);
+      if (index !== -1) {
+        state.songs[index] = action.payload; // Update the song in the list
+      }
+    },
+    updateSongFailure(state, action: PayloadAction<string>) {
+      state.loading = false;
+      state.error = action.payload;
+    },
   },
 });
 
@@ -76,6 +90,9 @@ export const {
   deleteSongRequest,
   deleteSongSuccess,
   deleteSongFailure,
+  updateSongRequest,
+  updateSongSuccess,
+  updateSongFailure,
 } = songSlice.actions;
 
 export default songSlice.reducer;

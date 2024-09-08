@@ -9,6 +9,9 @@ import {
   deleteSongRequest,
   deleteSongSuccess,
   deleteSongFailure,
+  updateSongRequest,
+  updateSongSuccess,
+  updateSongFailure,
   Song
 } from './slices/songSlice';
 
@@ -72,6 +75,27 @@ function* fetchSongs(): any {
     }
   }
   
+  function* updateSong(action: { payload: { id: string; song: Song } }): Generator<unknown, void, unknown> {
+    try {
+      const response: any = yield call(fetch, `${API_URL}/${action.payload.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(action.payload.song), // Use action.payload.song
+      });
+  
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+  
+      const data: any = yield response.json();
+      yield put(updateSongSuccess(data));
+    } catch (error) {
+      yield put(updateSongFailure(error instanceof Error ? error.message : 'Unknown error'));
+    }
+  }
+  
 //   function* fetchSongs() : any {
 //     try {
 //       const response = yield call(fetch, API_URL);
@@ -85,7 +109,7 @@ function* fetchSongs(): any {
     yield takeLatest(fetchSongsRequest.type, fetchSongs);
     yield takeEvery(addSongRequest, addSong);
     yield takeEvery(deleteSongRequest, deleteSong);
-
+    yield takeEvery(updateSongRequest.type as any, updateSong);
 
   }
   
