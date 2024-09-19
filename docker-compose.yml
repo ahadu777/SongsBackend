@@ -6,3 +6,11 @@ services:
     env_file: .env
     ports:
       - "3001:3001"
+
+  frontend:
+    build: 
+     context: ./front
+     dockerfile: dockerfile
+    ports:
+      - "3000:3000"
+
